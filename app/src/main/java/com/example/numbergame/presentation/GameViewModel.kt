@@ -32,7 +32,11 @@ class GameViewModel() : ViewModel() {
     val shouldCloseScreen: LiveData<Unit>
         get() = _shouldCloseScreen
 
-    fun generateQuestion() {
+    private val _amountOfRightAnswers = MutableLiveData<String>()
+    val amountOfRightAnswers: LiveData<String>
+        get() = _amountOfRightAnswers
+
+    private fun generateQuestion() {
         val sum = Random.nextInt(MIN_SUM_VALUE, gameSettings.maxSumValue)
         val visibleNumber = Random.nextInt(MIN_ANSWER_VALUE, sum)
         val options = HashSet<Int>()
@@ -93,7 +97,14 @@ class GameViewModel() : ViewModel() {
                 countOfQuestions = _gameResult.value?.countOfQuestions?.plus(1)!!
             )
         }
+        setStatisticsText()
         generateQuestion()
+    }
+
+    private fun setStatisticsText(){
+        val rightAnswers = _gameResult.value?.countOfRightAnswers
+        val allQuestions = _gameResult.value?.countOfQuestions
+        _amountOfRightAnswers.value = "Правильных ответов $rightAnswers (минимум $allQuestions)"
     }
 
     companion object {

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -50,9 +49,17 @@ class GameActivity : AppCompatActivity() {
         gameViewModel.time.observe(this) {
             tvTime.text = it.toString()
         }
+
+        val tvAnswersProgress = findViewById<TextView>(R.id.tv_answers_progress)
+
+        gameViewModel.amountOfRightAnswers.observe(this){
+            tvAnswersProgress.text = it
+        }
+
+        setupOptions()
     }
 
-    private fun setupOption(){
+    private fun setupOptions(){
         val tvOption1 = findViewById<TextView>(R.id.tv_option_1)
         val tvOption2 = findViewById<TextView>(R.id.tv_option_2)
         val tvOption3 = findViewById<TextView>(R.id.tv_option_3)
@@ -67,14 +74,14 @@ class GameActivity : AppCompatActivity() {
             tvOption5,
             tvOption6
         )
-        for(textView in textViews){
-            gameViewModel.question.observe(this){
-                it
+        gameViewModel.question.observe(this){
+            for(i in textViews.indices){
+                textViews[i].text = it.options[i].toString()
             }
         }
-        gameViewModel.question.observe(this){
-            for(i in 0..textViews.size){
-                textViews[i].text = it.options[i].toString()
+        for(textView in textViews){
+            textView.setOnClickListener {
+                gameViewModel.handleAnswer(textView.text.toString().toInt())
             }
         }
     }
