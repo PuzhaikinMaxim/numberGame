@@ -79,6 +79,7 @@ class GameViewModel() : ViewModel() {
     }
 
     fun startGame(){
+        setStatisticsText()
         generateQuestion()
         startTimer()
     }
@@ -103,7 +104,7 @@ class GameViewModel() : ViewModel() {
 
     private fun setStatisticsText(){
         val rightAnswers = _gameResult.value?.countOfRightAnswers
-        val allQuestions = _gameResult.value?.countOfQuestions
+        val allQuestions = gameSettings.minCountOfRightAnswers
         _amountOfRightAnswers.value = "Правильных ответов $rightAnswers (минимум $allQuestions)"
     }
 

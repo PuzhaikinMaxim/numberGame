@@ -26,6 +26,10 @@
             android:name=".presentation.GameActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".presentation.GameFinishedActivity"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>
