@@ -10,11 +10,14 @@ import com.example.numbergame.domain.GameSettings
 import com.example.numbergame.domain.Question
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class GameViewModel() : ViewModel() {
 
-    private lateinit var gameSettings: GameSettings
+    private lateinit var _gameSettings: GameSettings
+    val gameSettings: GameSettings
+        get() = _gameSettings.copy()
 
     private val _gameResult = MutableLiveData<GameResult>()
     val gameResult: LiveData<GameResult>
@@ -37,13 +40,13 @@ class GameViewModel() : ViewModel() {
         get() = _amountOfRightAnswers
 
     private fun generateQuestion() {
-        val sum = Random.nextInt(MIN_SUM_VALUE, gameSettings.maxSumValue)
+        val sum = Random.nextInt(MIN_SUM_VALUE, _gameSettings.maxSumValue)
         val visibleNumber = Random.nextInt(MIN_ANSWER_VALUE, sum)
         val options = HashSet<Int>()
         val rightAnswer = sum - visibleNumber
         options.add(rightAnswer)
         val from = max(rightAnswer - AMOUNT_OF_OPTIONS, MIN_ANSWER_VALUE)
-        val to = min(gameSettings.maxSumValue, rightAnswer + AMOUNT_OF_OPTIONS)
+        val to = min(_gameSettings.maxSumValue, rightAnswer + AMOUNT_OF_OPTIONS)
         while (options.size < AMOUNT_OF_OPTIONS){
             options.add(Random.nextInt(from, to))
         }
@@ -51,19 +54,19 @@ class GameViewModel() : ViewModel() {
     }
 
     fun setSettings(difficultyLevel: DifficultyLevel){
-        gameSettings = getGameSettings(difficultyLevel)
+        _gameSettings = getGameSettings(difficultyLevel)
         _gameResult.value = GameResult(
             false,
             0,
             0,
-            gameSettings
+            _gameSettings
         )
-        _time.value = gameSettings.gameTimeInSeconds
+        _time.value = _gameSettings.gameTimeInSeconds
     }
 
     private fun startTimer(){
         val timer = object : CountDownTimer(
-            gameSettings.gameTimeInSeconds.toLong() * MILLIS_IN_SEC,
+            _gameSettings.gameTimeInSeconds.toLong() * MILLIS_IN_SEC,
             MILLIS_IN_SEC
         ) {
             override fun onTick(millisUntilFinished: Long) {
@@ -71,11 +74,30 @@ class GameViewModel() : ViewModel() {
             }
 
             override fun onFinish() {
+                _gameResult.value = _gameResult.value!!.copy(
+                    isWon = isWon()
+                )
                 _shouldCloseScreen.value = Unit
             }
 
         }
         timer.start()
+    }
+
+    private fun isWon(): Boolean {
+
+        val countOfRightAnswers = _gameResult.value!!.countOfRightAnswers
+        val minCountOfRightAnswers = _gameSettings.minCountOfRightAnswers
+        if(minCountOfRightAnswers > countOfRightAnswers) return false
+
+        val countOfQuestions = _gameResult.value!!.countOfQuestions
+        val percentOfRightAnswers =
+            ((countOfRightAnswers.toDouble() / countOfQuestions.toDouble()) * 90).roundToInt()
+
+        val minPercentageOfRightAnswers = _gameSettings.minPercentageOfRightAnswers
+        if(minPercentageOfRightAnswers > percentOfRightAnswers) return false
+
+        return true
     }
 
     fun startGame(){
@@ -104,7 +126,7 @@ class GameViewModel() : ViewModel() {
 
     private fun setStatisticsText(){
         val rightAnswers = _gameResult.value?.countOfRightAnswers
-        val allQuestions = gameSettings.minCountOfRightAnswers
+        val allQuestions = _gameSettings.minCountOfRightAnswers
         _amountOfRightAnswers.value = "Правильных ответов $rightAnswers (минимум $allQuestions)"
     }
 

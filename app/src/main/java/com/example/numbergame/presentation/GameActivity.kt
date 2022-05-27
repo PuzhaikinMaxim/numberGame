@@ -25,7 +25,6 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun parseIntent(){
-        val intent = intent
         val difficultyLevel = intent.getParcelableExtra<DifficultyLevel>(EXTRA_LEVEL_NAME)
             ?: throw RuntimeException("Difficulty level is not set")
         gameViewModel.setSettings(difficultyLevel)
@@ -54,6 +53,13 @@ class GameActivity : AppCompatActivity() {
 
         gameViewModel.amountOfRightAnswers.observe(this){
             tvAnswersProgress.text = it
+        }
+
+        gameViewModel.shouldCloseScreen.observe(this){
+            val gameResult = gameViewModel.gameResult.value
+            val gameSettings = gameViewModel.gameSettings
+            val intent = GameFinishedActivity.newIntent(this,gameResult!!)
+            startActivity(intent)
         }
 
         setupOptions()
