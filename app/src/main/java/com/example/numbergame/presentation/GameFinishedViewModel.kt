@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.numbergame.domain.GameResult
-import com.example.numbergame.domain.GameSettings
 import kotlin.math.roundToInt
 
 class GameFinishedViewModel : ViewModel() {

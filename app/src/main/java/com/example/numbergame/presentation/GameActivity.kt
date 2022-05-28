@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -21,6 +22,7 @@ class GameActivity : AppCompatActivity() {
         gameViewModel = ViewModelProvider(this).get(GameViewModel::class.java)
         parseIntent()
         setObservers()
+        setProgressBar()
         startGame()
     }
 
@@ -62,6 +64,14 @@ class GameActivity : AppCompatActivity() {
         }
 
         setupOptions()
+    }
+
+    private fun setProgressBar(){
+        val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
+        gameViewModel.gameResult.observe(this) {
+            progressBar.max = it.countOfQuestions
+            progressBar.setProgress(it.countOfRightAnswers, true)
+        }
     }
 
     private fun setupOptions(){

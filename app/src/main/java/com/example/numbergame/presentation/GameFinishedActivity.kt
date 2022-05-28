@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.numbergame.R
 import com.example.numbergame.domain.GameResult
-import com.example.numbergame.domain.GameSettings
-import java.lang.RuntimeException
 
 class GameFinishedActivity : AppCompatActivity() {
 
