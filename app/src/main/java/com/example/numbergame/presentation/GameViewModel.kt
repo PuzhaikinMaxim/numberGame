@@ -16,8 +16,6 @@ import kotlin.random.Random
 class GameViewModel() : ViewModel() {
 
     private lateinit var _gameSettings: GameSettings
-    val gameSettings: GameSettings
-        get() = _gameSettings.copy()
 
     private val _gameResult = MutableLiveData<GameResult>()
     val gameResult: LiveData<GameResult>

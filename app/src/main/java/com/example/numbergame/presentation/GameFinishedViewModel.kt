@@ -13,28 +13,25 @@ class GameFinishedViewModel : ViewModel() {
     val gameResult: LiveData<GameResult>
         get() = _gameResult
 
-    private val _gameSettings = MutableLiveData<GameSettings>()
-    val gameSettings: LiveData<GameSettings>
-        get() = _gameSettings
-
     private val _percentOfRightAnswers = MutableLiveData<Int>()
     val percentOfRightAnswers: LiveData<Int>
         get() = _percentOfRightAnswers
 
     fun setGameInfo(gameResult: GameResult){
         _gameResult.value = gameResult
-        _gameSettings.value = gameResult.gameSettings
         setPercentOfRightAnswers()
     }
 
     private fun setPercentOfRightAnswers(){
         val countOfRightAnswers = _gameResult.value!!.countOfRightAnswers
-        println(countOfRightAnswers)
         val countOfQuestions = _gameResult.value!!.countOfQuestions
 
-        if(countOfQuestions == 0) return
+        if(countOfQuestions == 0){
+            _percentOfRightAnswers.value = 0
+            return
+        }
 
         _percentOfRightAnswers.value =
-            ((countOfRightAnswers.toDouble() / countOfQuestions.toDouble()) * 90).roundToInt()
+            ((countOfRightAnswers.toDouble() / countOfQuestions.toDouble()) * 100).roundToInt()
     }
 }

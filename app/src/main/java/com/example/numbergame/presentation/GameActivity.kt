@@ -57,7 +57,6 @@ class GameActivity : AppCompatActivity() {
 
         gameViewModel.shouldCloseScreen.observe(this){
             val gameResult = gameViewModel.gameResult.value
-            val gameSettings = gameViewModel.gameSettings
             val intent = GameFinishedActivity.newIntent(this,gameResult!!)
             startActivity(intent)
         }
